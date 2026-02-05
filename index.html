@@ -11,17 +11,9 @@
       <section class="pane pane-left">
         <header class="pane-header">
           <h1>SMS Split Preview</h1>
-          <p>
-            UCS-2 mode (Taiwan/Chinese). Emoji count as 2 code units. When
-            concatenated, each segment loses 3 units.
-          </p>
         </header>
 
         <div class="controls">
-          <label class="field">
-            <span>Single SMS limit (UCS-2 units)</span>
-            <input id="limitInput" type="number" min="1" value="70" />
-          </label>
           <label class="field field-grow">
             <span>Message</span>
             <textarea
@@ -39,6 +31,22 @@
           <div id="stats" class="stats"></div>
         </header>
         <div id="preview" class="preview" aria-live="polite"></div>
+      </section>
+
+      <section class="pane pane-full">
+        <header class="pane-header">
+          <h2>Settings</h2>
+          <p>
+            UCS-2 mode (Taiwan/Chinese). Emoji count as 2 code units. When
+            concatenated, each segment loses 3 units.
+          </p>
+        </header>
+        <div class="controls controls-inline">
+          <label class="field">
+            <span>Single SMS limit (UCS-2 units)</span>
+            <input id="limitInput" type="number" min="1" value="70" />
+          </label>
+        </div>
       </section>
     </main>
 

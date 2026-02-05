@@ -70,6 +70,13 @@ body {
   flex: 1;
 }
 
+.controls-inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -98,7 +105,7 @@ body {
 
 .field textarea {
   resize: vertical;
-  min-height: 220px;
+  min-height: 260px;
   line-height: 1.4;
 }
 
@@ -124,7 +131,8 @@ body {
   border-radius: 14px;
   background: #fff;
   border: 1px dashed var(--line);
-  min-height: 240px;
+  min-height: 260px;
+  flex: 1;
   white-space: pre-wrap;
   line-height: 1.6;
   font-size: 1.02rem;
@@ -164,6 +172,16 @@ body {
 .segment-count {
   font-weight: 600;
   color: var(--accent);
+}
+
+.pane-full {
+  grid-column: 1 / -1;
+  min-height: auto;
+  padding: 20px 24px;
+}
+
+.pane-full .controls {
+  margin-top: 12px;
 }
 
 @media (max-width: 900px) {
