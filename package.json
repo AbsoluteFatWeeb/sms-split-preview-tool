@@ -2,14 +2,18 @@
   "name": "sms-preview-tool",
   "version": "1.0.0",
   "description": "",
-  "license": "ISC",
-  "author": "",
-  "type": "commonjs",
+  "license": "GPL-3.0-only",
+  "author": "FatWeeb",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "lodash": "^4.17.23"
+    "lodash": "^4.17.23",
+    "astro": "^5.16.6"
   }
 }

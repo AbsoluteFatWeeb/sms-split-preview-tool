@@ -1,0 +1,414 @@
+---
+
+---
+
+<header class="page-header">
+  <h1>SMS Split Preview</h1>
+</header>
+<main class="app">
+  <section class="pane pane-main">
+    <div class="controls">
+      <label class="field">
+        <textarea id="messageInput" rows="12" placeholder="Type your SMS here..."></textarea>
+      </label>
+    </div>
+  </section>
+
+  <section class="pane pane-main">
+    <div class="preview-wrap">
+      <div id="preview" class="preview" aria-live="polite"></div>
+      <div id="stats" class="stats"></div>
+    </div>
+  </section>
+
+  <section class="pane pane-full">
+    <header class="pane-header">
+      <h2>Settings</h2>
+      <p>UCS-2 mode (Taiwan/Chinese). Emoji count as 2 code units. When concatenated, each segment loses 3 units.</p>
+    </header>
+    <div class="controls controls-inline">
+      <label class="field">
+        <span>Single SMS limit (UCS-2 units)</span>
+        <div class="input-row">
+          <input id="limitInput" type="number" min="1" value="70" />
+          <button id="limitReset" type="button">Reset</button>
+        </div>
+      </label>
+    </div>
+  </section>
+</main>
+
+<script>
+  import { default as _ } from "lodash";
+
+  const limitInput = document.getElementById("limitInput");
+  const limitReset = document.getElementById("limitReset");
+  const messageInput = document.getElementById("messageInput");
+  const preview = document.getElementById("preview");
+  const stats = document.getElementById("stats");
+
+  const segmentColors = ["segment-1", "segment-2", "segment-3", "segment-4", "segment-5", "segment-6"];
+
+  function countUcs2Units(text) {
+    return text.length;
+  }
+
+  function splitUcs2(text, limit) {
+    const parts = [];
+    let i = 0;
+
+    while (i < text.length) {
+      let end = Math.min(i + limit, text.length);
+
+      // Avoid splitting surrogate pairs (emoji, non-BMP)
+      const prev = text.charCodeAt(end - 1);
+      const next = text.charCodeAt(end);
+      const isHigh = prev >= 0xd800 && prev <= 0xdbff;
+      const isLow = next >= 0xdc00 && next <= 0xdfff;
+      if (end < text.length && isHigh && isLow) {
+        end -= 1;
+      }
+
+      parts.push(text.slice(i, end));
+      i = end;
+    }
+
+    return parts;
+  }
+
+  function buildSegments(text, singleLimit) {
+    const units = countUcs2Units(text);
+    const concatLimit = Math.max(singleLimit - 3, 1);
+    const isConcatenated = units > singleLimit;
+    const limit = isConcatenated ? concatLimit : singleLimit;
+    const parts = splitUcs2(text, limit);
+    return { parts, units, limit, isConcatenated };
+  }
+
+  function renderPreview() {
+    const limit = Math.max(parseInt(limitInput.value, 10) || 70, 1);
+    const message = messageInput.value;
+    const { parts, units, limit: actualLimit, isConcatenated } = buildSegments(message, limit);
+
+    preview.innerHTML = "";
+
+    if (message.length === 0) {
+      preview.textContent = "Start typing to see the split preview.";
+      stats.textContent = "";
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    parts.forEach((part, index) => {
+      const span = document.createElement("span");
+      const colorClass = segmentColors[index % segmentColors.length];
+      span.className = `segment ${colorClass}`;
+      span.textContent = part;
+      fragment.appendChild(span);
+    });
+    preview.appendChild(fragment);
+
+    const segmentCount = parts.length;
+    const label = isConcatenated
+      ? `Concatenated mode (${actualLimit} units/segment)`
+      : `Single SMS mode (${actualLimit} units)`;
+    stats.innerHTML = `
+    Total units: <span class="segment-count">${units}</span> |
+    Segments: <span class="segment-count">${segmentCount}</span> |
+    ${label}
+  `;
+  }
+
+  const debouncedRender = _.debounce(renderPreview, 500);
+
+  limitInput.addEventListener("input", debouncedRender);
+  messageInput.addEventListener("input", debouncedRender);
+  limitReset.addEventListener("click", () => {
+    limitInput.value = "70";
+    renderPreview();
+  });
+
+  renderPreview();
+</script>
+
+<style is:global>
+  :root {
+    --panel: #fcfbf8;
+    --ink: #1f1d1b;
+    --muted: #5b554d;
+    --line: #ded4c3;
+    --accent: #c86b3c;
+    --shadow: 0 18px 40px rgba(57, 38, 20, 0.12);
+    --header-height: 64px;
+    --segment-1: #cbeff2;
+    --segment-2: #f9d5e5;
+    --segment-3: #ffe7c7;
+    --segment-4: #d8f3c8;
+    --segment-5: #f1d9ff;
+    --segment-6: #d9e3ff;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Space Grotesk", "Avenir Next", "Helvetica Neue", sans-serif;
+    color: var(--ink);
+    background: radial-gradient(circle at top left, #fff6e9 0%, #f3e6d5 55%, #ecd8c1 100%);
+    min-height: 100vh;
+  }
+
+  .page-header {
+    max-width: 1200px;
+    height: var(--header-height);
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .page-header h1 {
+    margin: 0;
+    font-size: 2.1rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 18px;
+    padding: 12px 20px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: calc(100vh - var(--header-height));
+  }
+
+  .pane {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .pane-header h2 {
+    margin: 0 0 6px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .pane-header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .pane-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+  }
+
+  .pane-main .controls {
+    margin-top: 0;
+    flex: 1;
+  }
+
+  .controls {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .controls-inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .controls-inline .field {
+    flex: 0 0 auto;
+    min-width: 220px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.95rem;
+    flex: 1;
+  }
+
+  .field span {
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+  }
+
+  .field input,
+  .field textarea {
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    padding: 12px 14px;
+    font-size: 1rem;
+    font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+    background: #fff;
+    color: var(--ink);
+  }
+
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .input-row input {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .input-row button {
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .input-row button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(57, 38, 20, 0.12);
+  }
+
+  .input-row button:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  .field textarea {
+    resize: none;
+    min-height: 0;
+    height: 100%;
+    line-height: 1.4;
+    overflow: auto;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    outline: 2px solid rgba(200, 107, 60, 0.25);
+    border-color: var(--accent);
+  }
+
+  .preview-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+  }
+
+  .preview {
+    margin-top: 0;
+    padding: 16px;
+    padding-bottom: 52px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px dashed var(--line);
+    min-height: 0;
+    flex: 1;
+    height: 100%;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 1.02rem;
+    overflow: auto;
+  }
+
+  .stats {
+    position: absolute;
+    left: 16px;
+    bottom: 14px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    min-height: 18px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(57, 38, 20, 0.08);
+  }
+
+  .segment {
+    padding: 2px 0;
+    border-radius: 6px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .segment-1 {
+    background: var(--segment-1);
+  }
+
+  .segment-2 {
+    background: var(--segment-2);
+  }
+
+  .segment-3 {
+    background: var(--segment-3);
+  }
+
+  .segment-4 {
+    background: var(--segment-4);
+  }
+
+  .segment-5 {
+    background: var(--segment-5);
+  }
+
+  .segment-6 {
+    background: var(--segment-6);
+  }
+
+  .segment-count {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .pane-full {
+    grid-column: 1 / -1;
+    padding: 18px 20px;
+  }
+
+  .pane-full .controls {
+    margin-top: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .app {
+      grid-template-columns: 1fr;
+    }
+
+    .pane {
+      min-height: auto;
+    }
+  }
+</style>
