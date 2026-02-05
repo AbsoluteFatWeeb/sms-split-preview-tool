@@ -7,15 +7,13 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <header class="page-header">
+      <h1>SMS Split Preview</h1>
+    </header>
     <main class="app">
-      <section class="pane pane-left">
-        <header class="pane-header">
-          <h1>SMS Split Preview</h1>
-        </header>
-
+      <section class="pane pane-main">
         <div class="controls">
-          <label class="field field-grow">
-            <span>Message</span>
+          <label class="field">
             <textarea
               id="messageInput"
               rows="12"
@@ -25,12 +23,11 @@
         </div>
       </section>
 
-      <section class="pane pane-right">
-        <header class="pane-header">
-          <h2>Preview</h2>
+      <section class="pane pane-main">
+        <div class="preview-wrap">
+          <div id="preview" class="preview" aria-live="polite"></div>
           <div id="stats" class="stats"></div>
-        </header>
-        <div id="preview" class="preview" aria-live="polite"></div>
+        </div>
       </section>
 
       <section class="pane pane-full">
@@ -44,7 +41,10 @@
         <div class="controls controls-inline">
           <label class="field">
             <span>Single SMS limit (UCS-2 units)</span>
-            <input id="limitInput" type="number" min="1" value="70" />
+            <div class="input-row">
+              <input id="limitInput" type="number" min="1" value="70" />
+              <button id="limitReset" type="button">Reset</button>
+            </div>
           </label>
         </div>
       </section>

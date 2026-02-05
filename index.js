@@ -1,4 +1,5 @@
 const limitInput = document.getElementById("limitInput");
+const limitReset = document.getElementById("limitReset");
 const messageInput = document.getElementById("messageInput");
 const preview = document.getElementById("preview");
 const stats = document.getElementById("stats");
@@ -89,5 +90,9 @@ const debouncedRender = _.debounce(renderPreview, 500);
 
 limitInput.addEventListener("input", debouncedRender);
 messageInput.addEventListener("input", debouncedRender);
+limitReset.addEventListener("click", () => {
+  limitInput.value = "70";
+  renderPreview();
+});
 
 renderPreview();
