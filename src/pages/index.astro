@@ -434,6 +434,7 @@
     flex: 1;
     height: 100%;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
     line-height: 1.6;
     font-size: 1.02rem;
     overflow: auto;
@@ -467,9 +468,21 @@
 
   .preview.preview-inline .segment {
     display: inline;
-    padding: 2px 0;
+    padding: 2px 6px;
     margin: 0;
-    border-radius: 6px;
+    border-radius: 4px;
+  }
+
+  .preview.preview-inline .segment:has(+ .segment) {
+    padding-right: 2px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .preview.preview-inline .segment + .segment {
+    padding-left: 2px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 
   .segment-1 {
