@@ -2,48 +2,60 @@
 
 ---
 
-<header class="page-header">
-  <h1>SMS Split Preview</h1>
-</header>
-<main class="app">
-  <section class="pane pane-main">
-    <div class="controls">
-      <label class="field">
-        <textarea id="messageInput" rows="12" placeholder="Type your SMS here..."></textarea>
-      </label>
-    </div>
-  </section>
-
-  <section class="pane pane-main">
-    <div class="preview-wrap">
-      <div id="preview" class="preview" aria-live="polite"></div>
-      <div id="stats" class="stats"></div>
-    </div>
-  </section>
-
-  <section class="pane pane-full">
-    <header class="pane-header">
-      <h2>Settings</h2>
-      <p>UCS-2 mode (Taiwan/Chinese). Emoji count as 2 code units. When concatenated, each segment loses 3 units.</p>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+  </head>
+  <body>
+    <header class="page-header">
+      <h1>SMS Split Preview</h1>
     </header>
-    <div class="controls controls-inline">
-      <label class="field">
-        <span>Single SMS limit (UCS-2 units)</span>
-        <div class="input-row">
-          <input id="limitInput" type="number" min="1" value="70" />
-          <button id="limitReset" type="button">Reset</button>
+    <main class="app">
+      <section class="pane pane-main">
+        <div class="controls">
+          <label class="field">
+            <textarea id="messageInput" rows="12" placeholder="Type your SMS here..."></textarea>
+          </label>
         </div>
-      </label>
-      <label class="field toggle-field">
-        <span>Segment display</span>
-        <div class="toggle-row">
-          <button id="segmentInlineBtn" type="button" class="pill is-active">Inline</button>
-          <button id="segmentBlockBtn" type="button" class="pill">Block</button>
+      </section>
+
+      <section class="pane pane-main">
+        <div class="preview-wrap">
+          <div id="preview" class="preview" aria-live="polite"></div>
+          <div id="stats" class="stats"></div>
         </div>
-      </label>
-    </div>
-  </section>
-</main>
+      </section>
+
+      <section class="pane pane-full">
+        <header class="pane-header">
+          <h2>Settings</h2>
+          <p>
+            UCS-2 mode (Taiwan/Chinese). Emoji count as 2 code units. When concatenated, each segment loses 3 units.
+          </p>
+        </header>
+        <div class="controls controls-inline">
+          <label class="field">
+            <span>Single SMS limit (UCS-2 units)</span>
+            <div class="input-row">
+              <input id="limitInput" type="number" min="1" value="70" />
+              <button id="limitReset" type="button">Reset</button>
+            </div>
+          </label>
+          <label class="field toggle-field">
+            <span>Segment display</span>
+            <div class="toggle-row">
+              <button id="segmentInlineBtn" type="button" class="pill is-active">Inline</button>
+              <button id="segmentBlockBtn" type="button" class="pill">Block</button>
+            </div>
+          </label>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
 
 <script>
   import { default as _ } from "lodash";
@@ -329,7 +341,7 @@
     width: max-content;
 
     .toggle-row {
-      width: max-content;
+      width: 100%;
     }
 
     > span {
@@ -349,9 +361,9 @@
     border: 1px solid var(--line);
     background: #fff;
     color: var(--muted);
-    padding: 8px 18px;
+    padding: 10px 20px;
     height: var(--control-height);
-    border-radius: 999px;
+    border-radius: 14px;
     min-width: 84px;
     font-size: 0.9rem;
     font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
@@ -391,6 +403,7 @@
       flex: 1;
       min-width: 120px;
       height: var(--control-height);
+      text-align: center;
     }
 
     button {
@@ -534,6 +547,128 @@
 
     .pane {
       min-height: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    body {
+      min-height: auto;
+      font-size: 17px;
+    }
+
+    .page-header {
+      height: auto;
+      padding: 16px 16px 8px;
+      justify-content: center;
+      align-items: center;
+
+      h1 {
+        font-size: 2rem;
+        text-align: center;
+      }
+    }
+
+    .app {
+      height: auto;
+      padding: 8px 8px 16px;
+      gap: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pane {
+      padding: 14px;
+      border-radius: 14px;
+    }
+
+    .pane-full {
+      padding: 14px;
+    }
+
+    .controls-inline {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .controls-inline .field {
+      display: contents;
+    }
+
+    .controls-inline .field:not(.toggle-field) {
+      min-width: 0;
+    }
+
+    .controls-inline .field > span {
+      grid-row: 1;
+    }
+
+    .controls-inline .field:nth-child(1) > span {
+      grid-column: 1;
+    }
+
+    .controls-inline .field:nth-child(1) .input-row {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .controls-inline .field:nth-child(2) > span {
+      grid-column: 2;
+    }
+
+    .controls-inline .field:nth-child(2) .toggle-row {
+      grid-column: 2;
+      grid-row: 2;
+      width: 100%;
+    }
+
+    .toggle-field {
+      margin-left: 0;
+      align-items: flex-start;
+      width: auto;
+
+      > span {
+        text-align: left;
+      }
+    }
+
+    .toggle-row {
+      justify-content: flex-start;
+    }
+
+    .toggle-row .pill {
+      flex: 1;
+    }
+
+    .toggle-row {
+      align-items: stretch;
+      height: calc(var(--control-height) * 2 + 14px);
+    }
+
+    .toggle-row .pill {
+      height: 100%;
+    }
+
+    .input-row {
+      flex-direction: column;
+      align-items: stretch;
+
+      input,
+      button {
+        width: 100%;
+      }
+    }
+
+    .field textarea {
+      min-height: 180px;
+      height: 180px;
+    }
+
+    .preview {
+      min-height: 180px;
+      height: 180px;
     }
   }
 </style>
