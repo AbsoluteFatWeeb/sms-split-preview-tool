@@ -1,2 +1,6 @@
 node_modules
 .astro
+
+# Local Netlify folder
+.netlify
+dist
