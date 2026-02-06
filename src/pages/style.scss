@@ -374,6 +374,17 @@ body {
   }
 }
 
+.app-footer {
+  grid-column: 1 / -1;
+  justify-self: end;
+  margin-top: -6px;
+  padding: 0 4px 2px;
+  font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+  font-size: 0.76rem;
+  letter-spacing: 0.01em;
+  color: rgba(31, 29, 27, 0.58);
+}
+
 @media (max-width: 900px) {
   .app {
     grid-template-columns: 1fr;
@@ -408,6 +419,15 @@ body {
     gap: 12px;
     display: flex;
     flex-direction: column;
+  }
+
+  .app-footer {
+    align-self: stretch;
+    justify-self: auto;
+    margin-top: 0;
+    padding: 2px 2px 0;
+    font-size: 0.74rem;
+    text-align: center;
   }
 
   .pane {
