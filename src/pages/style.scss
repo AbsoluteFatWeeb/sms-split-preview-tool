@@ -374,15 +374,48 @@ body {
   }
 }
 
-.app-footer {
+.app-meta {
   grid-column: 1 / -1;
-  justify-self: end;
   margin-top: -6px;
   padding: 0 4px 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-footer,
+.repo-link {
   font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
   font-size: 0.76rem;
   letter-spacing: 0.01em;
   color: rgba(31, 29, 27, 0.58);
+}
+
+.app-footer {
+  order: 2;
+}
+
+.repo-link {
+  order: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: rgba(31, 29, 27, 0.8);
+  }
+}
+
+.repo-icon {
+  display: block;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 900px) {
@@ -421,13 +454,20 @@ body {
     flex-direction: column;
   }
 
-  .app-footer {
-    align-self: stretch;
-    justify-self: auto;
+  .app-meta {
     margin-top: 0;
     padding: 2px 2px 0;
-    font-size: 0.74rem;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .app-footer {
     text-align: center;
+    order: 1;
+  }
+
+  .repo-link {
+    order: 2;
   }
 
   .pane {
